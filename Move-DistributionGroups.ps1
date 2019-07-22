@@ -12,23 +12,6 @@
 #    Please note: None of the conditions outlined in the disclaimer above will supersede the terms and conditions contained 
 #    within the Premier Customer Services Description.
 #
-#
-
-########################################################################################################################
-# MICROSOFT - PFE Team Brazil
-#
-# File : Move-DistributionGroups.ps1
-# Version : 2.1
-# Creation date : Aug 25th, 2014
-# Modification date : Sep 19th 2018
-#
-# Author: Deivid de Foggi - Office 365 PFE
-# Colaboration: Marcelo Hunecke - Office 365 PFE
-#
-# Exchange version: Exchange On Premises and Exchange sOnline
-# 
-#########################################################################################################################
-
 <#
 .SYNOPSIS
 Export all groups/members to CSV files e after creates them in the EXO, finally adds each member in their respective groups
@@ -73,7 +56,7 @@ date = Date in the format dd/MM/yyyy-HH:mm:ss
 status = Status of the task, with the following possible values:
 
 ACTION - A action has been executed by the user. One of the available options was selected.
-CONN - A connection/session with EXO was created or deleted
+CONN - A connection/session with EXO was created or Remove-Itemeted
 ERROR - An erro was found
 EXPORT_GROUP - A group was recorded in the file DistributionGroups.csv.
 EXPORT_MEMBER - A group member was recorded in the file DistributionGroups_Members.csv.
@@ -207,7 +190,7 @@ Function ExportGroups{
         Else
         {
             try{
-            $AllDG = Get-DistributionGroup -resultsize unlimited | Select Name,Alias,BypassNestedModerationEnabled,DisplayName,ManagedBy,MemberDepartRestriction,MemberJoinRestriction,ModeratedBy,ModerationEnabled,SendModerationNotifications,AcceptMessagesOnlyFromDLMembers,AcceptMessagesOnlyFrom,HiddenFromAddressListsEnabled,PrimarySmtpAddress,RejectMessagesFrom,RejectMessagesFromDLMembers,RequireSenderAuthenticationEnabled,EmailAddresses,bypassModerationFromSendersOrMembers,GrantSendOnBehalfTo,SendAsPermission
+            $AllDG = Get-DistributionGroup -resultsize unlimited | Select-Object Name,Alias,BypassNestedModerationEnabled,DisplayName,ManagedBy,MemberDepartRestriction,MemberJoinRestriction,ModeratedBy,ModerationEnabled,SendModerationNotifications,AcceptMessagesOnlyFromDLMembers,AcceptMessagesOnlyFrom,HiddenFromAddressListsEnabled,PrimarySmtpAddress,RejectMessagesFrom,RejectMessagesFromDLMembers,RequireSenderAuthenticationEnabled,EmailAddresses,bypassModerationFromSendersOrMembers,GrantSendOnBehalfTo,SendAsPermission
             log -Status "ACTION" -Message "The option to migrate all distribution groups was selected"
             }
             catch{
@@ -239,7 +222,7 @@ Function ExportGroups{
         $objDL | Add-Member NoteProperty -Name "DisplayName" -Value $obj.DisplayName -ErrorAction SilentlyContinue
 
         If($obj.ManagedBy -ne ''){
-            $arr = $obj.ManagedBy | Select Name
+            $arr = $obj.ManagedBy | Select-Object Name
             foreach($user In $arr){
                 $managedBy += $user.Name.ToString() + ";"        
             }
@@ -252,7 +235,7 @@ Function ExportGroups{
         $arr=@()
 
         If($obj.ModeratedBy -ne ''){
-            $arr = $obj.ModeratedBy | Select Name
+            $arr = $obj.ModeratedBy | Select-Object Name
             foreach($user In $arr){
                 $moderatedBy += $user.Name.ToString() + ";"        
             }
@@ -267,7 +250,7 @@ Function ExportGroups{
         $arr=@()
 
         If($obj.AcceptMessagesOnlyFromDLMembers -ne ''){
-            $arr = $obj.AcceptMessagesOnlyFromDLMembers | Select Name
+            $arr = $obj.AcceptMessagesOnlyFromDLMembers | Select-Object Name
             foreach($user In $arr){
                 $AcceptMessagesOnlyFromDLMembers += $user.Name.ToString() + ";"        
             }
@@ -278,7 +261,7 @@ Function ExportGroups{
         $arr=@()
 
         If($obj.AcceptMessagesOnlyFrom -ne ''){
-            $arr = $obj.AcceptMessagesOnlyFrom | Select Name
+            $arr = $obj.AcceptMessagesOnlyFrom | Select-Object Name
             foreach($user In $arr){
                 $AcceptMessagesOnlyFrom += $user.Name.ToString() + ";"        
             }
@@ -291,7 +274,7 @@ Function ExportGroups{
         $arr=@()
 
        If($obj.RejectMessagesFrom -ne ''){
-            $arr = $obj.RejectMessagesFrom | Select Name
+            $arr = $obj.RejectMessagesFrom | Select-Object Name
             foreach($user In $arr){
                 $RejectMessagesFrom += $user.Name.ToString() + ";"        
             }
@@ -302,7 +285,7 @@ Function ExportGroups{
         $arr=@()
 
        If($obj.RejectMessagesFromDLMembers -ne ''){
-            $arr = $obj.RejectMessagesFromDLMembers | Select Name
+            $arr = $obj.RejectMessagesFromDLMembers | Select-Object Name
             foreach($user In $arr){
                 $RejectMessagesFromDLMembers += $user.Name.ToString() + ";"        
             }
@@ -314,7 +297,7 @@ Function ExportGroups{
         $arr=@()
 
         If($obj.EmailAddresses -ne ''){
-            $arr = $obj.EmailAddresses | Select SmtpAddress
+            $arr = $obj.EmailAddresses | Select-Object SmtpAddress
             foreach($item In $arr){
                 If($item -ne ''){
                     $EmailAddresses += $item.SmtpAddress + ";"
@@ -325,7 +308,7 @@ Function ExportGroups{
         $arr=@()
 
        If($obj.bypassModerationFromSendersOrMembers -ne ''){
-            $arr = $obj.bypassModerationFromSendersOrMembers | Select Name
+            $arr = $obj.bypassModerationFromSendersOrMembers | Select-Object Name
             foreach($user In $arr){
                 $bypassModerationFromSendersOrMembers += $user.Name.ToString() + ";"        
             }
@@ -335,7 +318,7 @@ Function ExportGroups{
         $GrantSendOnBehalfTo = ""
 
         If($obj.GrantSendOnBehalfTo -ne ''){
-            $arr = $obj.GrantSendOnBehalfTo | Select Name
+            $arr = $obj.GrantSendOnBehalfTo | Select-Object Name
             foreach($user In $arr){
                 $GrantSendOnBehalfTo += $user.Name.ToString() + ";"        
             }
@@ -344,7 +327,7 @@ Function ExportGroups{
         $arr=@()
         $SendAsPermission=””
 
-        $arr = Get-DistributionGroup $obj.Name | Get-ADPermission | ?{($_.ExtendedRights -like “*Send-As*”)}
+        $arr = Get-DistributionGroup $obj.Name | Get-ADPermission | Where-Object{($_.ExtendedRights -like “*Send-As*”)}
         
         If($arr -ne $null){
             foreach($user In $arr){
@@ -454,7 +437,7 @@ Function RemoveGroups{
                 }
             }
         
-            $dls | foreach{
+            $dls | ForEach-Object{
                 $groupName = $_.Name
                 
                 try{
@@ -562,19 +545,19 @@ Function CreateGroups{
                             try{
                                 $managers = Get-EXODistributionGroup $dl.Name -ErrorAction SilentlyContinue
                                 $managers.ManagedBy.Add($i)
-				log -Status "DEBUG_MODE" -Message $managers.ManagedBy
-				#Changed following error action from SilentlyContinue to Stop in order to validade why the error handling is not working either when the cmdlet works or not	
+				                log -Status "DEBUG_MODE" -Message $managers.ManagedBy
+				                #Changed following error action from SilentlyContinue to Stop in order to validade why the error handling is not working either when the cmdlet works or not	
                                 Set-EXODistributionGroup $dl.Name -ManagedBy $managers.ManagedBy -ErrorAction Stop | Out-Null
-				$managedByVar = $managers.ManagedBy
+                                
                                 log -Status "GROUP_EDIT" -Message "The user $i was added sucessfully in the attribute ManagedBy of the group $groupName in the EXO."
-				log -Status "DEBUG_MODE" -Message "Set-EXODistributionGroup error handling didn't catch"
-				log -Status "DEBUG_MODE" -Message $managers.ManagedBy
+				                log -Status "DEBUG_MODE" -Message "Set-EXODistributionGroup error handling didn't catch"
+				                log -Status "DEBUG_MODE" -Message $managers.ManagedBy
                             }
                             catch{
                                 log -Status "ERROR" -Message "Error when trying to add the user $i in the attribute ManagedBy of the group $groupName in the EXO."
-				log -Status "DEBUG_MODE" -Message $_
-				log -Status "DEBUG_MODE" -Message "Set-EXODistributionGroup error handling catch"
-				log -Status "DEBUG_MODE" -Message $managers.ManagedBy
+				                log -Status "DEBUG_MODE" -Message $_
+				                log -Status "DEBUG_MODE" -Message "Set-EXODistributionGroup error handling catch"
+				                log -Status "DEBUG_MODE" -Message $managers.ManagedBy
                             }
                         }
                     }
@@ -735,7 +718,7 @@ Function CreateGroups{
                     }
                 }
                               
-                $dlsMembers = Import-Csv DistributionGroups_Members.csv | ?{$_.DistributionGroup -eq $dl.Name}
+                $dlsMembers = Import-Csv DistributionGroups_Members.csv | Where-Object{$_.DistributionGroup -eq $dl.Name}
 
                 foreach($dlsMember in $dlsMembers){
                     
@@ -767,7 +750,7 @@ Function CreateGroups{
         }
 
     try{
-        del exo-contoso.sec -ErrorAction SilentlyContinue | Out-Null
+        Remove-Item exo-contoso.sec -ErrorAction SilentlyContinue | Out-Null
         log -Status "CONN" -Message "File with the encripted credentials was removed sucessfully"
         }
     catch{
