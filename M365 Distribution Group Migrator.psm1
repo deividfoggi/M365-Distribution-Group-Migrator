@@ -132,7 +132,7 @@ Function ConnectToEXO{
 }
 
 #Function to export groups
-Function Export-Groups{
+Function Export-DistributionGroups{
     Param(
         [string]$GroupList,
         [string]$Group
