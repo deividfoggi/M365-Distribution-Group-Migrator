@@ -133,15 +133,14 @@ Function ConnectToEXO{
 
 #Function to export groups
 Function Export-Groups{
-
     Param(
         [string]$GroupList,
         [string]$Group
     )
 
-    Write-Log -Status "ACTION" -Message "Option 1 - Export Groups and Members"
+    Write-Log -Status "ACTION" -Message "Export Groups and Members cmdlet started"
 
-    If($GroupList -ne ''){
+    If($GroupList){
         try{
             $AllDG = Import-Csv $GroupList
             Write-Log -Status "ACTION" -Message "The option to migrate a list of groups from the file $GroupList was selected"
@@ -152,7 +151,7 @@ Function Export-Groups{
     }
     Else
     {
-        If($Group -ne ''){
+        If($Group){
             try{
                 $AllDG = Get-DistributionGroup $Group
                 Write-Log -Status "ACTION" -Message "The option to migrate only the group $Group was selected"
@@ -195,7 +194,7 @@ Function Export-Groups{
         $objDL | Add-Member NoteProperty -Name "BypassNestedModerationEnabled" -Value $obj.BypassNestedModerationEnabled -ErrorAction SilentlyContinue
         $objDL | Add-Member NoteProperty -Name "DisplayName" -Value $obj.DisplayName -ErrorAction SilentlyContinue
 
-        If($obj.ManagedBy -ne ''){
+        If($obj.ManagedBy){
             $arr = $obj.ManagedBy | Select-Object Name
             foreach($user In $arr){
                 $managedBy += $user.Name.ToString() + ";"        
@@ -208,7 +207,7 @@ Function Export-Groups{
 
         $arr=@()
 
-        If($obj.ModeratedBy -ne ''){
+        If($obj.ModeratedBy){
             $arr = $obj.ModeratedBy | Select-Object Name
             foreach($user In $arr){
                 $moderatedBy += $user.Name.ToString() + ";"        
@@ -223,7 +222,7 @@ Function Export-Groups{
 
         $arr=@()
 
-        If($obj.AcceptMessagesOnlyFromDLMembers -ne ''){
+        If($obj.AcceptMessagesOnlyFromDLMembers){
             $arr = $obj.AcceptMessagesOnlyFromDLMembers | Select-Object Name
             foreach($user In $arr){
                 $AcceptMessagesOnlyFromDLMembers += $user.Name.ToString() + ";"        
@@ -234,7 +233,7 @@ Function Export-Groups{
 
         $arr=@()
 
-        If($obj.AcceptMessagesOnlyFrom -ne ''){
+        If($obj.AcceptMessagesOnlyFrom){
             $arr = $obj.AcceptMessagesOnlyFrom | Select-Object Name
             foreach($user In $arr){
                 $AcceptMessagesOnlyFrom += $user.Name.ToString() + ";"        
@@ -247,7 +246,7 @@ Function Export-Groups{
 
         $arr=@()
 
-       If($obj.RejectMessagesFrom -ne ''){
+       If($obj.RejectMessagesFrom){
             $arr = $obj.RejectMessagesFrom | Select-Object Name
             foreach($user In $arr){
                 $RejectMessagesFrom += $user.Name.ToString() + ";"        
@@ -258,7 +257,7 @@ Function Export-Groups{
 
         $arr=@()
 
-       If($obj.RejectMessagesFromDLMembers -ne ''){
+       If($obj.RejectMessagesFromDLMembers){
             $arr = $obj.RejectMessagesFromDLMembers | Select-Object Name
             foreach($user In $arr){
                 $RejectMessagesFromDLMembers += $user.Name.ToString() + ";"        
@@ -270,7 +269,7 @@ Function Export-Groups{
 
         $arr=@()
 
-        If($obj.EmailAddresses -ne ''){
+        If($obj.EmailAddresses){
             $arr = $obj.EmailAddresses | Select-Object SmtpAddress
             foreach($item In $arr){
                 If($item -ne ''){
@@ -281,7 +280,7 @@ Function Export-Groups{
 
         $arr=@()
 
-       If($obj.bypassModerationFromSendersOrMembers -ne ''){
+       If($obj.bypassModerationFromSendersOrMembers){
             $arr = $obj.bypassModerationFromSendersOrMembers | Select-Object Name
             foreach($user In $arr){
                 $bypassModerationFromSendersOrMembers += $user.Name.ToString() + ";"        
@@ -291,7 +290,7 @@ Function Export-Groups{
         $arr=@()
         $GrantSendOnBehalfTo = ""
 
-        If($obj.GrantSendOnBehalfTo -ne ''){
+        If($obj.GrantSendOnBehalfTo){
             $arr = $obj.GrantSendOnBehalfTo | Select-Object Name
             foreach($user In $arr){
                 $GrantSendOnBehalfTo += $user.Name.ToString() + ";"        
@@ -379,7 +378,7 @@ Function RemoveGroups{
         y{
             Write-Log -Status "ACTION" -Message "The exclusion of all groups in the file DistributionGroups.csv was confirmed by the user"
 
-            If($Group -ne ''){
+            If($Group){
                 try{
                     $dls = Get-DistributionGroup $Group -ErrorAction SilentlyContinue
                     Write-Log -Status "ACTION" -Message "The option to migrate only the group $Group was selected"
@@ -512,10 +511,10 @@ Function CreateGroups{
                     Write-Log -Status "ERROR" -Message "Error when trying to change the attributes RequireSenderAuthenticationEnabled, HiddenFromAddressListsEnabled and PrimarySmtpAddress in the grup $groupName in the EXO."
                 }
 
-                If($dl.ManagedBy -ne ''){
+                If($dl.ManagedBy){
                     $arr = $dl.ManagedBy.Split(";")
                     foreach($i in $arr){
-                        If($i -ne ''){
+                        If($i){
                             try{
                                 $managers = Get-EXODistributionGroup $dl.Name -ErrorAction SilentlyContinue
                                 $managers.ManagedBy.Add($i)
@@ -537,12 +536,12 @@ Function CreateGroups{
                     }
                 }
 
-                If($dl.ModeratedBy -ne ''){
+                If($dl.ModeratedBy){
                     Set-EXODistributionGroup $dl.Name -ModerationEnabled $true | Out-Null
 
                     $arr = $dl.ModeratedBy.Split(";")
                     foreach($i in $arr){
-                        If($i -ne ''){
+                        If($i -ne){
                             try{
                                 $moderators = Get-EXODistributionGroup $dl.Name
                                 $moderators.ModeratedBy.Add($i)
@@ -556,10 +555,10 @@ Function CreateGroups{
                     }
                 }
 
-                If($dl.AcceptMessagesOnlyFromDLMembers -ne ''){
+                If($dl.AcceptMessagesOnlyFromDLMembers){
                     $arr = $dl.AcceptMessagesOnlyFromDLMembers.Split(";")
                     foreach($i in $arr){
-                        If($i -ne ''){
+                        If($i){
                             try{
                                 $acc1 = Get-EXODistributionGroup $dl.Name -ErrorAction SilentlyContinue
                                 $acc1.AcceptMessagesOnlyFromDLMembers.Add($i)
@@ -573,10 +572,10 @@ Function CreateGroups{
                     }
                 }
     
-                If($dl.AcceptMessagesOnlyFrom -ne ''){
+                If($dl.AcceptMessagesOnlyFrom){
                     $arr = $dl.AcceptMessagesOnlyFrom.Split(";")
                     foreach($i in $arr){
-                        If($i -ne ''){
+                        If($i){
                             try{
                                 $acc2 = Get-EXODistributionGroup $dl.Name -ErrorAction SilentlyContinue
                                 $acc2.AcceptMessagesOnlyFrom.Add($i)
@@ -590,10 +589,10 @@ Function CreateGroups{
                     }
                 }
 
-                If($null -ne $dl.RejectMessagesFrom){
+                If($dl.RejectMessagesFrom){
                     $arr = $dl.RejectMessagesFrom.Split(";")
                     foreach($i in $arr){
-                        If($null -ne $i){
+                        If($i){
                             try{
                                 $acc3 = Get-EXODistributionGroup $dl.Name -ErrorAction SilentlyContinue
                                 $acc3.RejectMessagesFrom.Add($i)
@@ -607,10 +606,10 @@ Function CreateGroups{
                     }
                 }
  
-                If($dl.RejectMessagesFromDLMembers -ne ''){
+                If($dl.RejectMessagesFromDLMembers){
                     $arr = $dl.RejectMessagesFromDLMembers.Split(";")
                     foreach($i in $arr){
-                        If($i -ne ''){
+                        If($i){
                             try{
                                 $acc4 = Get-EXODistributionGroup $dl.Name -ErrorAction SilentlyContinue
                                 $acc4.RejectMessagesFromDLMembers.Add($i)
@@ -625,10 +624,10 @@ Function CreateGroups{
                         }
                     }
 
-                If($dl.EmailAddresses -ne ''){
+                If($dl.EmailAddresses){
                     $arr = $dl.EmailAddresses.Split(";")
                     foreach($i in $arr){
-                        If($i -ne ''){
+                        If($i){
                             try{
                                 $acc5 = Get-EXODistributionGroup $dl.Name -ErrorAction SilentlyContinue
                                 $acc5.EmailAddresses.Add($i)
@@ -643,10 +642,10 @@ Function CreateGroups{
                     }
                 }
 
-                If($dl.bypassModerationFromSendersOrMembers -ne ''){
+                If($dl.bypassModerationFromSendersOrMembers){
                     $arr = $dl.bypassModerationFromSendersOrMembers.Split(";")
                     foreach($i in $arr){
-                        If($i -ne ''){
+                        If($i){
                             try{
                                 $acc6 = Get-EXODistributionGroup $dl.Name -ErrorAction SilentlyContinue
                                 $acc6.bypassModerationFromSendersOrMembers.Add($i)
@@ -660,10 +659,10 @@ Function CreateGroups{
                     }
                 }
 
-                If($dl.GrantSendOnBehalfTo -ne ''){
+                If($dl.GrantSendOnBehalfTo){
                     $arr = $dl.GrantSendOnBehalfTo.Split(";")
                     foreach($i in $arr){
-                        If($i -ne ''){
+                        If($i){
                             try{
                                 $acc7 = Get-EXODistributionGroup $dl.Name -ErrorAction SilentlyContinue
                                 $acc7.GrantSendOnBehalfTo.Add($i)
@@ -677,10 +676,10 @@ Function CreateGroups{
                     }
                 }
                                        
-                If($dl.SendAsPermission -ne ''){
+                If($dl.SendAsPermission){
                     $arr = $dl.SendAsPermission.Split(";")
                     foreach($i in $arr){
-                        If($i -ne ''){
+                        If($i){
                             try{
                                 Add-EXORecipientPermission $dl.Name -AccessRights SendAs -Trustee $i -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
                                 Write-Log -Status "GROUP_EDIT" -Message "The permission SendAs was added sucessfully for the user/group $i in the group $groupName in the EXO"
@@ -730,15 +729,4 @@ Function CreateGroups{
     catch{
         Write-Log -Status "ERROR" -Message "Error when trying to remove the file with the encripted credentials"
     }
-}
-
-If($Group -eq ''){
-    Menu
-}
-Else{
-    If($Group -ne ''){
-        ExportGroups -Group $Group
-        RemoveGroups -Group $Group
-        CreateGroups
-        }
 }
