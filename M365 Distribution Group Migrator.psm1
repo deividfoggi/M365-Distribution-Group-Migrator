@@ -5,7 +5,7 @@
 #    THIS SAMPLE CODE AND ANY RELATED INFORMATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED,        
 #    INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
 #    We grant You a nonexclusive, royalty-free right to use and modify the Sample Code and to reproduce and distribute
-#    the object code form of the Sample Code, provided that You agree: (i) to not use Our name, Write-Logo, or trademarks
+#    the object code form of the Sample Code, provided that You agree: (i) to not use Our name, Logo, or trademarks
 #    to market Your software product in which the Sample Code is embedded; (ii) to include a valid copyright notice on
 #    Your software product in which the Sample Code is embedded; and (iii) to indemnify, hold harmless, and defend Us
 #    and Our suppliers from and against any claims or lawsuits, including attorneys’ fees, that arise or result from the 
@@ -49,9 +49,9 @@ The third option creates all groups listed in the file DistributionGroups.csv in
 
 The Group parameter could be used to move a specific group
 
-.Write-LogGING
-The execution of this script will create a Write-Log file in the same directory of this script with the name dd_MM_yyyy.Write-Log, creating a new Write-Log for each new day that the script is executed. This Write-Log will register actions and errors.
-The file Write-Log contains the following columns separated by comma:
+.LOGGING
+The execution of this script will create a Log file in the same directory of this script with the name dd_MM_yyyy.Log, creating a new Log for each new day that the script is executed. This Log will register actions and errors.
+The file Log contains the following columns separated by comma:
 
 date = Date in the format dd/MM/yyyy-HH:mm:ss
 status = Status of the task, with the following possible values:
@@ -81,7 +81,7 @@ Function Write-Log{
         [string]$Message
     )
     
-    $logName = Get-Date -Format d_M_yyyy.Write-Log
+    $logName = Get-Date -Format d_M_yyyy.log
 
     $dayLogFile = Test-Path $logName
     
