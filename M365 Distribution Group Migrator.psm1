@@ -142,7 +142,7 @@ Function Export-Groups{
 
     If($GroupList){
         try{
-            $AllDG = Import-Csv $GroupList -ErrorAction Stop
+             $distributionGroups = Import-Csv $GroupList -ErrorAction Stop
             Write-Log -Status "ACTION" -Message "The option to migrate a list of groups from the file $GroupList was selected"
         }
         catch{
@@ -153,7 +153,7 @@ Function Export-Groups{
     {
         If($Group){
             try{
-                $AllDG = Get-DistributionGroup $Group -ErrorAction Stop
+                 $distributionGroups = Get-DistributionGroup $Group -ErrorAction Stop
                 Write-Log -Status "ACTION" -Message "The option to migrate only the group $Group was selected"
             }
             catch{
@@ -163,7 +163,7 @@ Function Export-Groups{
         Else
         {
             try{
-            $AllDG = Get-DistributionGroup -ResultSize Unlimited -ErrorAction Stop | Select-Object Name,Alias,BypassNestedModerationEnabled,DisplayName,ManagedBy,MemberDepartRestriction,MemberJoinRestriction,ModeratedBy,ModerationEnabled,SendModerationNotifications,AcceptMessagesOnlyFromDLMembers,AcceptMessagesOnlyFrom,HiddenFromAddressListsEnabled,PrimarySmtpAddress,RejectMessagesFrom,RejectMessagesFromDLMembers,RequireSenderAuthenticationEnabled,EmailAddresses,bypassModerationFromSendersOrMembers,GrantSendOnBehalfTo,SendAsPermission
+             $distributionGroups = Get-DistributionGroup -ResultSize Unlimited -ErrorAction Stop | Select-Object Name,Alias,BypassNestedModerationEnabled,DisplayName,ManagedBy,MemberDepartRestriction,MemberJoinRestriction,ModeratedBy,ModerationEnabled,SendModerationNotifications,AcceptMessagesOnlyFromDLMembers,AcceptMessagesOnlyFrom,HiddenFromAddressListsEnabled,PrimarySmtpAddress,RejectMessagesFrom,RejectMessagesFromDLMembers,RequireSenderAuthenticationEnabled,EmailAddresses,bypassModerationFromSendersOrMembers,GrantSendOnBehalfTo,SendAsPermission
             Write-Log -Status "ACTION" -Message "The option to migrate all distribution groups was selected"
             }
             catch{
@@ -176,7 +176,7 @@ Function Export-Groups{
     $outputDLMembers = @()
     $arr = @()
 
-    Foreach($obj in $AllDG){
+    Foreach($obj in  $distributionGroups){
         $AcceptMessagesOnlyFromDLMembers = $Null
         $AcceptMessagesOnlyFrom = $Null
         $RejectMessagesFrom = $Null
@@ -334,7 +334,7 @@ Function Export-Groups{
             Write-Log -Status "ERROR" -Message "Error when trying to create the file GruposDeDistribucao.csv"
         }
         
-        Foreach($dg in $allDg){
+        Foreach($dg in  $distributionGroups){
 
             $Members = Get-DistributionGroupMember $dg.name -resultsize unlimited -ErrorAction SilentlyContinue
         
