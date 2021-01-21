@@ -5,7 +5,7 @@
 #    THIS SAMPLE CODE AND ANY RELATED INFORMATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED,        
 #    INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
 #    We grant You a nonexclusive, royalty-free right to use and modify the Sample Code and to reproduce and distribute
-#    the object code form of the Sample Code, provided that You agree: (i) to not use Our name, logo, or trademarks
+#    the object code form of the Sample Code, provided that You agree: (i) to not use Our name, Write-Logo, or trademarks
 #    to market Your software product in which the Sample Code is embedded; (ii) to include a valid copyright notice on
 #    Your software product in which the Sample Code is embedded; and (iii) to indemnify, hold harmless, and defend Us
 #    and Our suppliers from and against any claims or lawsuits, including attorneys’ fees, that arise or result from the 
@@ -49,9 +49,9 @@ The third option creates all groups listed in the file DistributionGroups.csv in
 
 The Group parameter could be used to move a specific group
 
-.LOGGING
-The execution of this script will create a log file in the same directory of this script with the name dd_MM_yyyy.LOG, creating a new log for each new day that the script is executed. This log will register actions and errors.
-The file log contains the following columns separated by comma:
+.Write-LogGING
+The execution of this script will create a Write-Log file in the same directory of this script with the name dd_MM_yyyy.Write-Log, creating a new Write-Log for each new day that the script is executed. This Write-Log will register actions and errors.
+The file Write-Log contains the following columns separated by comma:
 
 date = Date in the format dd/MM/yyyy-HH:mm:ss
 status = Status of the task, with the following possible values:
@@ -74,14 +74,14 @@ Param(
     [string]$Group
 )
 
-#Function to create a log file and register log entries
-Function log{
+#Function to create a Write-Log file and register Write-Log entries
+Function Write-Log{
     Param(
         [string]$Status,
         [string]$Message
     )
     
-    $logName = Get-Date -Format d_M_yyyy.LOG
+    $logName = Get-Date -Format d_M_yyyy.Write-Log
 
     $dayLogFile = Test-Path $logName
     
@@ -108,7 +108,7 @@ Function ConnectToEXO{
         $a = Get-Credential
         $a.Password | ConvertFrom-SecureString | Set-Content exo-password.sec
 
-        log -Status "CONN" -Message "User credentials for the user $a.UserName encripted"
+        Write-Log -Status "CONN" -Message "User credentials for the user $a.UserName encripted"
 
         $userName = $a.UserName
         $password = Get-Content .\exo-contoso.sec | convertto-securestring
@@ -116,65 +116,38 @@ Function ConnectToEXO{
 
         $Global:EXOSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $EXOCredential -Authentication Basic -AllowRedirection -ErrorAction SilentlyContinue
 
-        log -Status "CONN" -Message "Session with EXO using the user $userName created sucessfully"
+        Write-Log -Status "CONN" -Message "Session with EXO using the user $userName created sucessfully"
     }
     catch{
-        log -Status "ERROR" -Message "Error when trying to create a EXO session"
+        Write-Log -Status "ERROR" -Message "Error when trying to create a EXO session"
         }
 
     try{
         Import-PSSession $EXOSession -Prefix EXO -CommandName New-DistributionGroup,Add-DistributionGroupMember,Set-DistributionGroup,Get-DistributionGroup,Get-Mailbox,Add-RecipientPermission -AllowClobber -ErrorAction SilentlyContinue
-        log -Status "CONN" -Message "Session with EXO imported sucessfully for the user $userName"
+        Write-Log -Status "CONN" -Message "Session with EXO imported sucessfully for the user $userName"
         }
         catch{
-            log -Status "ERROR" -Message "Error when trying to import the EXO session"
+            Write-Log -Status "ERROR" -Message "Error when trying to import the EXO session"
         }
-}
-
-#Function to show the main menu
-Function Menu{
-
-    Write-Host "           
-    Modo:
-
-    1 - Export a list containing all the distribution groups and their respective members
-    2 - Remove all groups from the Exchange OnPrem
-    3 - Create all groups in the Exchange Online and add the respective members
-
-    " -ForegroundColor Yellow
-
-    $mode = Read-Host "Choose an execution mode"
-
-    switch($mode){
-        1{
-            ExportGroups
-        }
-        2{
-            RemoveGroups
-        }
-        3{
-            CreateGroups
-        }
-    }
 }
 
 #Function to export groups
-Function ExportGroups{
+Function Export-Groups{
 
     Param(
         [string]$GroupList,
         [string]$Group
     )
 
-    log -Status "ACTION" -Message "Option 1 - Export Groups and Members"
+    Write-Log -Status "ACTION" -Message "Option 1 - Export Groups and Members"
 
     If($GroupList -ne ''){
         try{
             $AllDG = Import-Csv $GroupList
-            log -Status "ACTION" -Message "The option to migrate a list of groups from the file $GroupList was selected"
+            Write-Log -Status "ACTION" -Message "The option to migrate a list of groups from the file $GroupList was selected"
         }
         catch{
-            log -Status "ERROR" -Message "Error when trying to import a list of groups"
+            Write-Log -Status "ERROR" -Message "Error when trying to import a list of groups"
         }
     }
     Else
@@ -182,20 +155,20 @@ Function ExportGroups{
         If($Group -ne ''){
             try{
                 $AllDG = Get-DistributionGroup $Group
-                log -Status "ACTION" -Message "The option to migrate only the group $Group was selected"
+                Write-Log -Status "ACTION" -Message "The option to migrate only the group $Group was selected"
             }
             catch{
-                log -Status "ERROR" -Message "Error when trying to execute the cmdlet Get-DistributionGroup for the group $Group"
+                Write-Log -Status "ERROR" -Message "Error when trying to execute the cmdlet Get-DistributionGroup for the group $Group"
             }
         }
         Else
         {
             try{
             $AllDG = Get-DistributionGroup -resultsize unlimited | Select-Object Name,Alias,BypassNestedModerationEnabled,DisplayName,ManagedBy,MemberDepartRestriction,MemberJoinRestriction,ModeratedBy,ModerationEnabled,SendModerationNotifications,AcceptMessagesOnlyFromDLMembers,AcceptMessagesOnlyFrom,HiddenFromAddressListsEnabled,PrimarySmtpAddress,RejectMessagesFrom,RejectMessagesFromDLMembers,RequireSenderAuthenticationEnabled,EmailAddresses,bypassModerationFromSendersOrMembers,GrantSendOnBehalfTo,SendAsPermission
-            log -Status "ACTION" -Message "The option to migrate all distribution groups was selected"
+            Write-Log -Status "ACTION" -Message "The option to migrate all distribution groups was selected"
             }
             catch{
-            log -Status "ERROR" -Message "Error when trying to executed the cmdlet Get-DistributionGroup for the group $Group"
+            Write-Log -Status "ERROR" -Message "Error when trying to executed the cmdlet Get-DistributionGroup for the group $Group"
             }
         }
     }
@@ -351,16 +324,16 @@ Function ExportGroups{
         $outputDL += $objDL
     
         $groupName = $objDL.Name
-        log -Status "EXPORT_GROUP" -Message "The group $groupName was added to export list"
+        Write-Log -Status "EXPORT_GROUP" -Message "The group $groupName was added to export list"
 
         }
 
         try{
             $outputDL | Export-Csv DistributionGroups.csv -NoTypeInformation -ErrorAction SilentlyContinue -Encoding UTF8
-            log -Status "EXPORT_GROUP" -Message "The file DistributionGroups.csv was created sucessfully"
+            Write-Log -Status "EXPORT_GROUP" -Message "The file DistributionGroups.csv was created sucessfully"
         }
         catch{
-            log -Status "ERROR" -Message "Error when trying to create the file GruposDeDistribucao.csv"
+            Write-Log -Status "ERROR" -Message "Error when trying to create the file GruposDeDistribucao.csv"
         }
         
         Foreach($dg in $allDg){
@@ -377,16 +350,16 @@ Function ExportGroups{
         
                 $outputDLMembers += $objMember
 
-                log -Status "EXPORT_MEMBER" -Message "The member $groupMember of the group $groupName was added to the export list"
+                Write-Log -Status "EXPORT_MEMBER" -Message "The member $groupMember of the group $groupName was added to the export list"
             }
         }
 
         try{
             $outputDLMembers | Export-Csv DistributionGroups_Members.csv -NoTypeInformation -ErrorAction SilentlyContinue -Encoding UTF8
-            log -Status "EXPORT_GROUP" -Message "The file DistributionGroups_Members.csv was created with sucess"
+            Write-Log -Status "EXPORT_GROUP" -Message "The file DistributionGroups_Members.csv was created with sucess"
         }
         catch{
-            log -Status "ERROR" -Message "Error when trying to create the fileDistributionGroups_Members.csv"
+            Write-Log -Status "ERROR" -Message "Error when trying to create the fileDistributionGroups_Members.csv"
         }
 }
 
@@ -397,22 +370,22 @@ Function RemoveGroups{
         [string]$Group
     )
     
-    log -Status "ACTION" -Message "Option 2 = Remove groups"
+    Write-Log -Status "ACTION" -Message "Option 2 = Remove groups"
 
     $mode2 = Read-Host "
     WARNING!!! This procedure will remove all groups listed in the file DistributionGroups.csv from the On-Premises organization. Would you like to proceed (y/n)?"
     
     switch($mode2){
         y{
-            log -Status "ACTION" -Message "The exclusion of all groups in the file DistributionGroups.csv was confirmed by the user"
+            Write-Log -Status "ACTION" -Message "The exclusion of all groups in the file DistributionGroups.csv was confirmed by the user"
 
             If($Group -ne ''){
                 try{
                     $dls = Get-DistributionGroup $Group -ErrorAction SilentlyContinue
-                    log -Status "ACTION" -Message "The option to migrate only the group $Group was selected"
+                    Write-Log -Status "ACTION" -Message "The option to migrate only the group $Group was selected"
                 }
                 catch{
-                    log -Status "ERROR" -Message $varErro
+                    Write-Log -Status "ERROR" -Message $varErro
                     $varErro = ''
                 }
             }
@@ -423,10 +396,10 @@ Function RemoveGroups{
                 If($dls -eq $true -and $dlsMembers -eq $true){
                     try{
                         $dls = Import-Csv DistributionGroups.csv -ErrorAction SilentlyContinue
-                        log -Status "ACTION" -Message "The option to migrate all groups was selected"
+                        Write-Log -Status "ACTION" -Message "The option to migrate all groups was selected"
                     }
                     catch{
-                        log -Status "ERROR" -Message $varErro
+                        Write-Log -Status "ERROR" -Message $varErro
                         $varErro = ''
                     }
                 }
@@ -434,7 +407,7 @@ Function RemoveGroups{
                 {
                     Write-Host "The file DistributionGroups.csv was removed. Keep this file in the same directory as the script or use the option 1 again to recreate them"
                     
-                    log -Status "ERROR" -Message "File DistributionGroups.csv not found"
+                    Write-Log -Status "ERROR" -Message "File DistributionGroups.csv not found"
                 }
             }
         
@@ -443,15 +416,15 @@ Function RemoveGroups{
                 
                 try{
                     Remove-DistributionGroup $_.Name -BypassSecurityGroupManagerCheck -Confirm:$y -ErrorAction SilentlyContinue
-                    log -Status "GROUP_REMOVED" -Message "Group $groupName was removed from the Exchange OnPrem"
+                    Write-Log -Status "GROUP_REMOVED" -Message "Group $groupName was removed from the Exchange OnPrem"
                 }
                 catch{
-                    log -Status "ERROR" -Message "Error when trying to remove the group $groupName"
+                    Write-Log -Status "ERROR" -Message "Error when trying to remove the group $groupName"
                 }
             }
         }
         n{
-            log -Status "ACTION" -Message "Option 2 - Remove Groups aborted"
+            Write-Log -Status "ACTION" -Message "Option 2 - Remove Groups aborted"
             Write-Host "Taks aborted!" -ForegroundColor Yellow
         }
     }
@@ -464,14 +437,14 @@ Function CreateGroups{
         [string]$Group
         )
 
-    log -Status "ACTION" -Message "Option 3 - Create groups in the EXO was selected"
+    Write-Log -Status "ACTION" -Message "Option 3 - Create groups in the EXO was selected"
 
     $mode2 = Read-Host "
     WARNING!!! Before use the option 3, you must guarantee that the following steps have sucessfully completed:
 
         1. Only use option 3 before option 2;
         2. Move all users that are either in the field ManagedBy or ModeratedBy to the EXO;
-        3. Run the sync, confirm that all groups have been removed from the Windows Azure Active Directory and make sure no error is logged.
+        3. Run the sync, confirm that all groups have been removed from the Windows Azure Active Directory and make sure no error is Write-Logged.
 
     Proceed ONLY if all 3 steps above have sucessfully completed
 
@@ -479,7 +452,7 @@ Function CreateGroups{
 
     switch($mode2){
         y{
-            log -Status "ACTION" -Message "The groups creation in the EXO was selected"
+            Write-Log -Status "ACTION" -Message "The groups creation in the EXO was selected"
 
             $dls = Test-Path DistributionGroups.csv
             $dlsMembers = Test-Path DistributionGroups_Members.csv
@@ -487,17 +460,17 @@ Function CreateGroups{
             If($dls -eq $true -and $dlsMembers -eq $true){
                 try{
                 $dls = Import-Csv DistributionGroups.csv -ErrorAction SilentlyContinue
-                log -Status "ACTION" -Message "The option to migrate all groups was selected"
+                Write-Log -Status "ACTION" -Message "The option to migrate all groups was selected"
             }
             catch{
-                log -Status "ERROR" -Message "Error when trying to import the file DistributionGroups.csv"
+                Write-Log -Status "ERROR" -Message "Error when trying to import the file DistributionGroups.csv"
                 }
             }
             Else
             {
                 Write-Host "The file DistributionGroups.csv was removed. Keep the file in the same directory as the script directory or use the option 2 to create them."
                     
-                log -Status "ERROR" -Message "Arquivo DistributionGroups.csv não encontrado"
+                Write-Log -Status "ERROR" -Message "Arquivo DistributionGroups.csv não encontrado"
                 
                 Exit
             }
@@ -525,18 +498,18 @@ Function CreateGroups{
 
                 try{
                     New-EXODistributionGroup -Name $dl.Name -Alias $dl.Alias -BypassNestedModerationEnabled $BypassNestedModerationEnabled -DisplayName $dl.DisplayName -MemberDepartRestriction $dl.MemberDepartRestriction -MemberJoinRestriction $dl.MemberJoinRestriction -SendModerationNotifications $dl.SendModerationNotifications -Type Distribution | Out-Null
-                    log -Status "GROUP_CREATED" -Message "Group $groupName in the EXO was created sucessfully"
+                    Write-Log -Status "GROUP_CREATED" -Message "Group $groupName in the EXO was created sucessfully"
                 }
                 catch{
-                    log -Status "ERROR" -Message "Error when trying to create the group $groupName in the EXO"
+                    Write-Log -Status "ERROR" -Message "Error when trying to create the group $groupName in the EXO"
                 }
                 
                 try{
                     Set-EXODistributionGroup $dl.Name -RequireSenderAuthenticationEnabled $RequireSenderAuthenticationEnabled -HiddenFromAddressListsEnabled $HiddenFromAddressListsEnabled -PrimarySmtpAddress $dl.PrimarySmtpAddress -ErrorAction SilentlyContinue | Out-Null
-                    log -Status "GROUP_EDIT" -Message "The attributes RequireSenderAuthenticationEnabled, HiddenFromAddressListsEnabled and PrimarySmtpAddress were changedto $RequireSenderAuthenticationEnabled, $HiddenFromAddressListsEnabled and $dl.PrimarySmtpAddress respectively in the group $groupName sucessfully in the EXO."
+                    Write-Log -Status "GROUP_EDIT" -Message "The attributes RequireSenderAuthenticationEnabled, HiddenFromAddressListsEnabled and PrimarySmtpAddress were changedto $RequireSenderAuthenticationEnabled, $HiddenFromAddressListsEnabled and $dl.PrimarySmtpAddress respectively in the group $groupName sucessfully in the EXO."
                 }
                 catch{
-                    log -Status "ERROR" -Message "Error when trying to change the attributes RequireSenderAuthenticationEnabled, HiddenFromAddressListsEnabled and PrimarySmtpAddress in the grup $groupName in the EXO."
+                    Write-Log -Status "ERROR" -Message "Error when trying to change the attributes RequireSenderAuthenticationEnabled, HiddenFromAddressListsEnabled and PrimarySmtpAddress in the grup $groupName in the EXO."
                 }
 
                 If($dl.ManagedBy -ne ''){
@@ -546,19 +519,19 @@ Function CreateGroups{
                             try{
                                 $managers = Get-EXODistributionGroup $dl.Name -ErrorAction SilentlyContinue
                                 $managers.ManagedBy.Add($i)
-				                log -Status "DEBUG_MODE" -Message $managers.ManagedBy
+				                Write-Log -Status "DEBUG_MODE" -Message $managers.ManagedBy
 				                #Changed following error action from SilentlyContinue to Stop in order to validade why the error handling is not working either when the cmdlet works or not	
                                 Set-EXODistributionGroup $dl.Name -ManagedBy $managers.ManagedBy -ErrorAction Stop | Out-Null
                                 
-                                log -Status "GROUP_EDIT" -Message "The user $i was added sucessfully in the attribute ManagedBy of the group $groupName in the EXO."
-				                log -Status "DEBUG_MODE" -Message "Set-EXODistributionGroup error handling didn't catch"
-				                log -Status "DEBUG_MODE" -Message $managers.ManagedBy
+                                Write-Log -Status "GROUP_EDIT" -Message "The user $i was added sucessfully in the attribute ManagedBy of the group $groupName in the EXO."
+				                Write-Log -Status "DEBUG_MODE" -Message "Set-EXODistributionGroup error handling didn't catch"
+				                Write-Log -Status "DEBUG_MODE" -Message $managers.ManagedBy
                             }
                             catch{
-                                log -Status "ERROR" -Message "Error when trying to add the user $i in the attribute ManagedBy of the group $groupName in the EXO."
-				                log -Status "DEBUG_MODE" -Message $_
-				                log -Status "DEBUG_MODE" -Message "Set-EXODistributionGroup error handling catch"
-				                log -Status "DEBUG_MODE" -Message $managers.ManagedBy
+                                Write-Log -Status "ERROR" -Message "Error when trying to add the user $i in the attribute ManagedBy of the group $groupName in the EXO."
+				                Write-Log -Status "DEBUG_MODE" -Message $_
+				                Write-Log -Status "DEBUG_MODE" -Message "Set-EXODistributionGroup error handling catch"
+				                Write-Log -Status "DEBUG_MODE" -Message $managers.ManagedBy
                             }
                         }
                     }
@@ -574,10 +547,10 @@ Function CreateGroups{
                                 $moderators = Get-EXODistributionGroup $dl.Name
                                 $moderators.ModeratedBy.Add($i)
                                 Set-EXODistributionGroup $dl.Name -ModeratedBy $moderators.ModeratedBy | Out-Null
-                                log -Status "GROUP_EDIT" -Message "The user $i was added $i sucessfully in the attribute ModeratedBy of the group $groupName in the EXO"
+                                Write-Log -Status "GROUP_EDIT" -Message "The user $i was added $i sucessfully in the attribute ModeratedBy of the group $groupName in the EXO"
                             }
                             catch{
-                                log -Status "ERROR" -Message "Error when trying to add the user $i in the attribute ModeratedBy of the group $groupName in the EXO"
+                                Write-Log -Status "ERROR" -Message "Error when trying to add the user $i in the attribute ModeratedBy of the group $groupName in the EXO"
                             }
                         }
                     }
@@ -591,10 +564,10 @@ Function CreateGroups{
                                 $acc1 = Get-EXODistributionGroup $dl.Name -ErrorAction SilentlyContinue
                                 $acc1.AcceptMessagesOnlyFromDLMembers.Add($i)
                                 Set-EXODistributionGroup $dl.Name -AcceptMessagesOnlyFromDLMembers $acc1.AcceptMessagesOnlyFromDLMembers -ErrorAction SilentlyContinue | Out-Null
-                                log -Status "GROUP_EDIT" -Message "The group $i was added sucessfully in the attribute AcceptMessagesOnlyFromDLMembers of the group $groupName in the EXO"
+                                Write-Log -Status "GROUP_EDIT" -Message "The group $i was added sucessfully in the attribute AcceptMessagesOnlyFromDLMembers of the group $groupName in the EXO"
                             }
                             catch{
-                                log -Status "ERROR" -Message "Error when trying to add the group $i in the attribute AcceptMessagesOnlyFromDLMembers of the group $groupName in the EXO"
+                                Write-Log -Status "ERROR" -Message "Error when trying to add the group $i in the attribute AcceptMessagesOnlyFromDLMembers of the group $groupName in the EXO"
                             }
                         }
                     }
@@ -608,10 +581,10 @@ Function CreateGroups{
                                 $acc2 = Get-EXODistributionGroup $dl.Name -ErrorAction SilentlyContinue
                                 $acc2.AcceptMessagesOnlyFrom.Add($i)
                                 Set-EXODistributionGroup $dl.Name -AcceptMessagesOnlyFrom $acc2.AcceptMessagesOnlyFrom -ErrorAction SilentlyContinue | Out-Null
-                                log -Status "GROUP_EDIT" -Message "The user $i $i was added with sucess in the attribute AcceptMessagesOnlyFrom of the group $groupName"
+                                Write-Log -Status "GROUP_EDIT" -Message "The user $i $i was added with sucess in the attribute AcceptMessagesOnlyFrom of the group $groupName"
                             }
                             catch{
-                                log -Status "ERROR" -Message "Error when trying to add the user $i in the attribute AcceptMessagesOnlyFrom of the group $groupName in the EXO"
+                                Write-Log -Status "ERROR" -Message "Error when trying to add the user $i in the attribute AcceptMessagesOnlyFrom of the group $groupName in the EXO"
                             }
                         }
                     }
@@ -625,10 +598,10 @@ Function CreateGroups{
                                 $acc3 = Get-EXODistributionGroup $dl.Name -ErrorAction SilentlyContinue
                                 $acc3.RejectMessagesFrom.Add($i)
                                 Set-EXODistributionGroup $dl.Name -RejectMessagesFrom $acc3.RejectMessagesFrom -ErrorAction SilentlyContinue | Out-Null
-                                log -Status "GROUP_EDIT" -Message "The user $i was added sucessfully in the attribute RejectMessagesFrom of the group $groupName in the EXO"
+                                Write-Log -Status "GROUP_EDIT" -Message "The user $i was added sucessfully in the attribute RejectMessagesFrom of the group $groupName in the EXO"
                             }
                             catch{
-                                log -Status "ERROR" -Message "Error when trying to add the user $i in the attribute RejectMessagesFrom of the group $groupName in the EXO"
+                                Write-Log -Status "ERROR" -Message "Error when trying to add the user $i in the attribute RejectMessagesFrom of the group $groupName in the EXO"
                             }
                         }
                     }
@@ -642,10 +615,10 @@ Function CreateGroups{
                                 $acc4 = Get-EXODistributionGroup $dl.Name -ErrorAction SilentlyContinue
                                 $acc4.RejectMessagesFromDLMembers.Add($i)
                                 Set-EXODistributionGroup $dl.Name -RejectMessagesFromDLMembers $acc4.RejectMessagesFromDLMembers -ErrorAction SilentlyContinue | Out-Null
-                                log -Status "GROUP_EDIT" -Message "The group $i was added sucessfully in the attribute RejectMessagesFromDLMembers of the group $groupName in the EXO"
+                                Write-Log -Status "GROUP_EDIT" -Message "The group $i was added sucessfully in the attribute RejectMessagesFromDLMembers of the group $groupName in the EXO"
                             }
                             catch{
-                                log -Status "ERROR" -Message "Error when trying to add the group $i in the attribute RejectMessagesFromDLMembers of the group $groupName in the EXO"
+                                Write-Log -Status "ERROR" -Message "Error when trying to add the group $i in the attribute RejectMessagesFromDLMembers of the group $groupName in the EXO"
                                 }
                             }
                         
@@ -661,10 +634,10 @@ Function CreateGroups{
                                 $acc5.EmailAddresses.Add($i)
                                 $groupName = $dl.Name
                                 Set-EXODistributionGroup $dl.Name -EmailAddresses $acc5.EmailAddresses -ErrorAction SilentlyContinue | Out-Null
-                                log -Status "GROUP_EDIT" -Message "The email address $i was added sucessfully in the attribute EmailAddresses of the group $groupName in the EXO"
+                                Write-Log -Status "GROUP_EDIT" -Message "The email address $i was added sucessfully in the attribute EmailAddresses of the group $groupName in the EXO"
                                 }
                             catch{
-                                log -Status "ERROR" -Message "Error when trying to add the email address $i in the attribute EmailAddresses of the group $groupName in the EXO"
+                                Write-Log -Status "ERROR" -Message "Error when trying to add the email address $i in the attribute EmailAddresses of the group $groupName in the EXO"
                                 }
                         }
                     }
@@ -678,10 +651,10 @@ Function CreateGroups{
                                 $acc6 = Get-EXODistributionGroup $dl.Name -ErrorAction SilentlyContinue
                                 $acc6.bypassModerationFromSendersOrMembers.Add($i)
                                 Set-EXODistributionGroup $dl.Name -bypassModerationFromSendersOrMembers $acc6.bypassModerationFromSendersOrMembers -ErrorAction SilentlyContinue | Out-Null
-                                log -Status "GROUP_EDIT" -Message "The user/group $i was added sucessfully in the attribute bypassModerationFromSendersOrMembers of the group $groupName in the EXO"
+                                Write-Log -Status "GROUP_EDIT" -Message "The user/group $i was added sucessfully in the attribute bypassModerationFromSendersOrMembers of the group $groupName in the EXO"
                                 }
                             catch{
-                                log -Status "ERROR" -Message "Error when trying to add the user/group $i in the attribute bypassModerationFromSendersOrMembers of the group $groupName in the EXO"
+                                Write-Log -Status "ERROR" -Message "Error when trying to add the user/group $i in the attribute bypassModerationFromSendersOrMembers of the group $groupName in the EXO"
                                 }
                         }
                     }
@@ -695,10 +668,10 @@ Function CreateGroups{
                                 $acc7 = Get-EXODistributionGroup $dl.Name -ErrorAction SilentlyContinue
                                 $acc7.GrantSendOnBehalfTo.Add($i)
                                 Set-EXODistributionGroup $dl.Name -GrantSendOnBehalfTo $acc7.GrantSendOnBehalfTo -ErrorAction SilentlyContinue | Out-Null
-                                log -Status "GROUP_EDIT" -Message "The user/group $i was added sucessfully in the attribute GrantSendOnBehalfTo of the group $groupName in the EXO"
+                                Write-Log -Status "GROUP_EDIT" -Message "The user/group $i was added sucessfully in the attribute GrantSendOnBehalfTo of the group $groupName in the EXO"
                                 }
                             catch{
-                                log -Status "ERROR" -Message "Error when trying to add the user/group $i in the attribute GrantSendOnBehalfTo of the group $groupName in the EXO"
+                                Write-Log -Status "ERROR" -Message "Error when trying to add the user/group $i in the attribute GrantSendOnBehalfTo of the group $groupName in the EXO"
                                 }
                         }
                     }
@@ -710,10 +683,10 @@ Function CreateGroups{
                         If($i -ne ''){
                             try{
                                 Add-EXORecipientPermission $dl.Name -AccessRights SendAs -Trustee $i -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
-                                log -Status "GROUP_EDIT" -Message "The permission SendAs was added sucessfully for the user/group $i in the group $groupName in the EXO"
+                                Write-Log -Status "GROUP_EDIT" -Message "The permission SendAs was added sucessfully for the user/group $i in the group $groupName in the EXO"
                                 }
                             catch{
-                                log -Status "ERROR" -Message "Error when trying to the permission SendAs for the group $i in the group $groupName in the EXO"
+                                Write-Log -Status "ERROR" -Message "Error when trying to the permission SendAs for the group $i in the group $groupName in the EXO"
                                 }
                         }
                     }
@@ -726,17 +699,17 @@ Function CreateGroups{
                     $dlMember = $dlsMember.Alias                    
                     try{
                         Add-EXODistributionGroupMember $dl.Name -Member $dlsMember.Alias -ErrorAction SilentlyContinue | Out-Null
-                        log -Status "ADD_MEMBER" -Message "User $dlMember was added sucessfully in the members list of the group $groupname in the EXO"
+                        Write-Log -Status "ADD_MEMBER" -Message "User $dlMember was added sucessfully in the members list of the group $groupname in the EXO"
                     }
                     catch{
-                        log -Status "ERROR" -Message "Error when trying to add the user $dlMember in the members list of the group $groupname in the EXO"
+                        Write-Log -Status "ERROR" -Message "Error when trying to add the user $dlMember in the members list of the group $groupname in the EXO"
                     }
                 }           
             
             }
         }
         n{
-            log -Status "ACTION" -Message "Creation of groups in the EXO aborted by user"
+            Write-Log -Status "ACTION" -Message "Creation of groups in the EXO aborted by user"
 
             Write-Host "Task aborted!"
         }
@@ -744,18 +717,18 @@ Function CreateGroups{
 
     try{
         Remove-PSSession $EXOSession -ErrorAction SilentlyContinue | Out-Null
-        log -Status "CONN" -Message "EXO Session removed sucessfully"
+        Write-Log -Status "CONN" -Message "EXO Session removed sucessfully"
         }
     catch{
-        log -Status "ERROR" -Message "Error when trying to remove the EXO session"
+        Write-Log -Status "ERROR" -Message "Error when trying to remove the EXO session"
         }
 
     try{
         Remove-Item exo-contoso.sec -ErrorAction SilentlyContinue | Out-Null
-        log -Status "CONN" -Message "File with the encripted credentials was removed sucessfully"
+        Write-Log -Status "CONN" -Message "File with the encripted credentials was removed sucessfully"
         }
     catch{
-        log -Status "ERROR" -Message "Error when trying to remove the file with the encripted credentials"
+        Write-Log -Status "ERROR" -Message "Error when trying to remove the file with the encripted credentials"
     }
 }
 
