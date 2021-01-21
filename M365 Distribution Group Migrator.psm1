@@ -720,3 +720,5 @@ Function CreateGroups{
         Write-Log -Status "ERROR" -Message "Error when trying to remove the file with the encripted credentials"
     }
 }
+
+Export-ModuleMember -Function Export-DistributionGroups
