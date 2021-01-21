@@ -320,39 +320,36 @@ Function Export-Groups{
 
     }
 
-        try{
-            $outputDL | Export-Csv DistributionGroups.csv -NoTypeInformation -ErrorAction SilentlyContinue -Encoding UTF8
-            Write-Log -Status "EXPORT_GROUP" -Message "The file DistributionGroups.csv was created sucessfully"
-        }
-        catch{
-            Write-Log -Status "ERROR" -Message "Error when trying to create the file GruposDeDistribucao.csv"
-        }
+    try{
+        $outputDL | Export-Csv DistributionGroups.csv -NoTypeInformation -ErrorAction SilentlyContinue -Encoding UTF8
+        Write-Log -Status "EXPORT_GROUP" -Message "The file DistributionGroups.csv was created sucessfully"
+    }
+    catch{
+        Write-Log -Status "ERROR" -Message "Error when trying to create the file GruposDeDistribucao.csv"
+    }
         
-        Foreach($dg in  $distributionGroups){
+    Foreach($dg in  $distributionGroups){
 
-            $Members = Get-DistributionGroupMember $dg.name -resultsize unlimited -ErrorAction SilentlyContinue
+        $Members = Get-DistributionGroupMember $dg.name -resultsize unlimited -ErrorAction SilentlyContinue
         
-            Foreach($Member in $Members){
-                $groupMember = $member.Alias
-
-                $objMember = New-Object PSObject
-
-                $objMember | Add-Member NoteProperty -Name "Alias" -Value $member.Alias -ErrorAction SilentlyContinue
-                $objMember | Add-Member NoteProperty -Name "DistributionGroup" -Value $DG.Name -ErrorAction SilentlyContinue
-        
-                $outputDLMembers += $objMember
-
-                Write-Log -Status "EXPORT_MEMBER" -Message "The member $groupMember of the group $groupName was added to the export list"
+        Foreach($Member in $Members){
+            $groupMember = $member.Alias
+            $objMember = New-Object PSObject
+            $objMember | Add-Member NoteProperty -Name "Alias" -Value $member.Alias -ErrorAction SilentlyContinue
+            $objMember | Add-Member NoteProperty -Name "DistributionGroup" -Value $DG.Name -ErrorAction SilentlyContinue
+    
+            $outputDLMembers += $objMember
+            Write-Log -Status "EXPORT_MEMBER" -Message "The member $groupMember of the group $groupName was added to the export list"
             }
-        }
+    }
 
-        try{
-            $outputDLMembers | Export-Csv DistributionGroups_Members.csv -NoTypeInformation -ErrorAction SilentlyContinue -Encoding UTF8
-            Write-Log -Status "EXPORT_GROUP" -Message "The file DistributionGroups_Members.csv was created with sucess"
-        }
-        catch{
-            Write-Log -Status "ERROR" -Message "Error when trying to create the fileDistributionGroups_Members.csv"
-        }
+    try{
+        $outputDLMembers | Export-Csv DistributionGroups_Members.csv -NoTypeInformation -ErrorAction SilentlyContinue -Encoding UTF8
+        Write-Log -Status "EXPORT_GROUP" -Message "The file DistributionGroups_Members.csv was created with sucess"
+    }
+    catch{
+        Write-Log -Status "ERROR" -Message "Error when trying to create the fileDistributionGroups_Members.csv"
+    }
 }
 
 #Function used to remove groups from the Exchange OnPrem
