@@ -344,7 +344,7 @@ Function Export-Groups{
     }
 
     try{
-        $outputDLMembers | Export-Csv DistributionGroups_Members.csv -NoTypeInformation -ErrorAction SilentlyContinue -Encoding UTF8
+        $outputDLMembers | Export-Csv DistributionGroups_Members.csv -NoTypeInformation -ErrorAction Stop -Encoding UTF8
         Write-Log -Status "EXPORT_GROUP" -Message "The file DistributionGroups_Members.csv was created with sucess"
     }
     catch{
