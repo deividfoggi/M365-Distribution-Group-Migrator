@@ -1,4 +1,4 @@
-﻿#
+﻿<#
 #    Move-DistributionGroups.ps1
 #
 #    This Sample Code is provided for the purpose of illustration only and is not intended to be used in a production environment.  
@@ -13,7 +13,7 @@
 #    Please note: None of the conditions outlined in the disclaimer above will supersede the terms and conditions contained 
 #    within the Premier Customer Services Description.
 #
-<#
+
 .SYNOPSIS
 Export all groups/members to CSV files e after creates them in the EXO, finally adds each member in their respective groups
 Move-DistributionGroups.ps1
@@ -768,4 +768,4 @@ Else{
         RemoveGroups -Group $Group
         CreateGroups
         }
-    }
+}
