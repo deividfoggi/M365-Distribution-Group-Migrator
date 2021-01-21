@@ -142,7 +142,7 @@ Function Export-Groups{
 
     If($GroupList){
         try{
-            $AllDG = Import-Csv $GroupList
+            $AllDG = Import-Csv $GroupList -ErrorAction Stop
             Write-Log -Status "ACTION" -Message "The option to migrate a list of groups from the file $GroupList was selected"
         }
         catch{
@@ -153,7 +153,7 @@ Function Export-Groups{
     {
         If($Group){
             try{
-                $AllDG = Get-DistributionGroup $Group
+                $AllDG = Get-DistributionGroup $Group -ErrorAction Stop
                 Write-Log -Status "ACTION" -Message "The option to migrate only the group $Group was selected"
             }
             catch{
@@ -163,7 +163,7 @@ Function Export-Groups{
         Else
         {
             try{
-            $AllDG = Get-DistributionGroup -resultsize unlimited | Select-Object Name,Alias,BypassNestedModerationEnabled,DisplayName,ManagedBy,MemberDepartRestriction,MemberJoinRestriction,ModeratedBy,ModerationEnabled,SendModerationNotifications,AcceptMessagesOnlyFromDLMembers,AcceptMessagesOnlyFrom,HiddenFromAddressListsEnabled,PrimarySmtpAddress,RejectMessagesFrom,RejectMessagesFromDLMembers,RequireSenderAuthenticationEnabled,EmailAddresses,bypassModerationFromSendersOrMembers,GrantSendOnBehalfTo,SendAsPermission
+            $AllDG = Get-DistributionGroup -ResultSize Unlimited -ErrorAction Stop | Select-Object Name,Alias,BypassNestedModerationEnabled,DisplayName,ManagedBy,MemberDepartRestriction,MemberJoinRestriction,ModeratedBy,ModerationEnabled,SendModerationNotifications,AcceptMessagesOnlyFromDLMembers,AcceptMessagesOnlyFrom,HiddenFromAddressListsEnabled,PrimarySmtpAddress,RejectMessagesFrom,RejectMessagesFromDLMembers,RequireSenderAuthenticationEnabled,EmailAddresses,bypassModerationFromSendersOrMembers,GrantSendOnBehalfTo,SendAsPermission
             Write-Log -Status "ACTION" -Message "The option to migrate all distribution groups was selected"
             }
             catch{
@@ -172,20 +172,19 @@ Function Export-Groups{
         }
     }
 
-    $outputDL=@()
-    $outputDLMembers=@()
-    $arr=@()
+    $outputDL = @()
+    $outputDLMembers = @()
+    $arr = @()
 
     Foreach($obj in $AllDG){
-
-        $AcceptMessagesOnlyFromDLMembers=""
-        $AcceptMessagesOnlyFrom=""
-        $RejectMessagesFrom=""
-        $RejectMessagesFromDLMembers=""
-        $EmailAddresses=""        
-        $managedBy=""
-        $moderatedBy=""
-        $bypassModerationFromSendersOrMembers=""
+        $AcceptMessagesOnlyFromDLMembers = $Null
+        $AcceptMessagesOnlyFrom = $Null
+        $RejectMessagesFrom = $Null
+        $RejectMessagesFromDLMembers = $Null
+        $EmailAddresses = $Null        
+        $managedBy = $Null
+        $moderatedBy = $Null
+        $bypassModerationFromSendersOrMembers = $Null
 
         $objDL = New-Object psobject
 
@@ -288,7 +287,7 @@ Function Export-Groups{
         }
 
         $arr=@()
-        $GrantSendOnBehalfTo = ""
+        $GrantSendOnBehalfTo = $Null
 
         If($obj.GrantSendOnBehalfTo){
             $arr = $obj.GrantSendOnBehalfTo | Select-Object Name
