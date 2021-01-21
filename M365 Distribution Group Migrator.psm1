@@ -332,12 +332,12 @@ Function Export-Groups{
 
         $distributionGroupMembers = Get-DistributionGroupMember $dg.name -resultsize unlimited -ErrorAction SilentlyContinue
         
-        Foreach($Member in $distributionGroupMembers){
+        Foreach($member in $distributionGroupMembers){
             $groupMember = $member.Alias
-            $objMember = New-Object PSObject
-            $objMember | Add-Member NoteProperty -Name "Alias" -Value $member.Alias -ErrorAction SilentlyContinue
-            $objMember | Add-Member NoteProperty -Name "DistributionGroup" -Value $DG.Name -ErrorAction SilentlyContinue
-    
+            $objMember = [PSCustomObject]@{
+                Alias = $member.Alias
+                DistributionGroup = $dg.Name
+            }
             $outputDLMembers += $objMember
             Write-Log -Status "EXPORT_MEMBER" -Message "The member $groupMember of the group $groupName was added to the export list"
             }
