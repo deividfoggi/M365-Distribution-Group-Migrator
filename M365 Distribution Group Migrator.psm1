@@ -330,9 +330,9 @@ Function Export-Groups{
         
     Foreach($dg in  $distributionGroups){
 
-        $Members = Get-DistributionGroupMember $dg.name -resultsize unlimited -ErrorAction SilentlyContinue
+        $distributionGroupMembers = Get-DistributionGroupMember $dg.name -resultsize unlimited -ErrorAction SilentlyContinue
         
-        Foreach($Member in $Members){
+        Foreach($Member in $distributionGroupMembers){
             $groupMember = $member.Alias
             $objMember = New-Object PSObject
             $objMember | Add-Member NoteProperty -Name "Alias" -Value $member.Alias -ErrorAction SilentlyContinue
