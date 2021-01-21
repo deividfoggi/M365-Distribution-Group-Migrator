@@ -540,7 +540,7 @@ Function CreateGroups{
 
                     $arr = $dl.ModeratedBy.Split(";")
                     foreach($i in $arr){
-                        If($i -ne){
+                        If($i){
                             try{
                                 $moderators = Get-EXODistributionGroup $dl.Name
                                 $moderators.ModeratedBy.Add($i)
