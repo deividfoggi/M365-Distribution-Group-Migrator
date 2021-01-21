@@ -177,6 +177,7 @@ Function Export-Groups{
     $arr = @()
 
     Foreach($obj in  $distributionGroups){
+
         $AcceptMessagesOnlyFromDLMembers = $Null
         $AcceptMessagesOnlyFrom = $Null
         $RejectMessagesFrom = $Null
@@ -186,12 +187,6 @@ Function Export-Groups{
         $moderatedBy = $Null
         $bypassModerationFromSendersOrMembers = $Null
 
-        $objDL = New-Object psobject
-
-        $objDL | Add-Member NoteProperty -Name "Name" -Value $obj.Name -ErrorAction SilentlyContinue
-        $objDL | Add-Member NoteProperty -Name "Alias" -Value $obj.Alias -ErrorAction SilentlyContinue
-        $objDL | Add-Member NoteProperty -Name "BypassNestedModerationEnabled" -Value $obj.BypassNestedModerationEnabled -ErrorAction SilentlyContinue
-        $objDL | Add-Member NoteProperty -Name "DisplayName" -Value $obj.DisplayName -ErrorAction SilentlyContinue
 
         If($obj.ManagedBy){
             $arr = $obj.ManagedBy | Select-Object Name
@@ -199,11 +194,7 @@ Function Export-Groups{
                 $managedBy += $user.Name.ToString() + ";"        
             }
         }
-
-        $objDL | Add-Member NoteProperty -Name "ManagedBy" -Value $managedBy -ErrorAction SilentlyContinue
-        $objDL | Add-Member NoteProperty -Name "MemberDepartRestriction" -Value $obj.MemberDepartRestriction -ErrorAction SilentlyContinue
-        $objDL | Add-Member NoteProperty -Name "MemberJoinRestriction" -Value $obj.MemberJoinRestriction -ErrorAction SilentlyContinue
-
+        
         $arr=@()
 
         If($obj.ModeratedBy){
@@ -211,13 +202,7 @@ Function Export-Groups{
             foreach($user In $arr){
                 $moderatedBy += $user.Name.ToString() + ";"        
             }
-        }
-
-        $objDL | Add-Member NoteProperty -Name "ModeratedBy" -Value $moderatedBy -ErrorAction SilentlyContinue
-        $objDL | Add-Member NoteProperty -Name "ModerationEnabled" -Value $obj.ModerationEnabled -ErrorAction SilentlyContinue
-        $objDL | Add-Member NoteProperty -Name "SendModerationNotifications" -Value $obj.SendModerationNotifications -ErrorAction SilentlyContinue
-        $objDL | Add-Member NoteProperty -Name "MaxSendSize" -Value $obj.MaxSendSize -ErrorAction SilentlyContinue
-        $objDL | Add-Member NoteProperty -Name "MaxReceiveSize" -Value $obj.MaxReceiveSize -ErrorAction SilentlyContinue
+        }        
 
         $arr=@()
 
@@ -228,8 +213,6 @@ Function Export-Groups{
             }
         }
 
-        $objDL | Add-Member NoteProperty -Name "AcceptMessagesOnlyFromDLMembers" -Value $AcceptMessagesOnlyFromDLMembers -ErrorAction SilentlyContinue
-
         $arr=@()
 
         If($obj.AcceptMessagesOnlyFrom){
@@ -239,21 +222,15 @@ Function Export-Groups{
             }
         }
 
-        $objDL | Add-Member NoteProperty -Name "AcceptMessagesOnlyFrom" -Value $AcceptMessagesOnlyFrom -ErrorAction SilentlyContinue
-        $objDL | Add-Member NoteProperty -Name "HiddenFromAddressListsEnabled" -Value $obj.HiddenFromAddressListsEnabled -ErrorAction SilentlyContinue
-        $objDL | Add-Member NoteProperty -Name "PrimarySmtpAddress" -Value $obj.PrimarySmtpAddress -ErrorAction SilentlyContinue
-
         $arr=@()
 
-       If($obj.RejectMessagesFrom){
-            $arr = $obj.RejectMessagesFrom | Select-Object Name
-            foreach($user In $arr){
-                $RejectMessagesFrom += $user.Name.ToString() + ";"        
+        If($obj.RejectMessagesFrom){
+                $arr = $obj.RejectMessagesFrom | Select-Object Name
+                foreach($user In $arr){
+                    $RejectMessagesFrom += $user.Name.ToString() + ";"        
+                }
             }
-        }
         
-        $objDL | Add-Member NoteProperty -Name "RejectMessagesFrom" -Value $RejectMessagesFrom -ErrorAction SilentlyContinue
-
         $arr=@()
 
        If($obj.RejectMessagesFromDLMembers){
@@ -262,10 +239,7 @@ Function Export-Groups{
                 $RejectMessagesFromDLMembers += $user.Name.ToString() + ";"        
             }
         }
-        
-        $objDL | Add-Member NoteProperty -Name "RejectMessagesFromDLMembers" -Value $RejectMessagesFromDLMembers -ErrorAction SilentlyContinue
-        $objDL | Add-Member NoteProperty -Name "RequireSenderAuthenticationEnabled" -Value $obj.RequireSenderAuthenticationEnabled -ErrorAction SilentlyContinue
-
+    
         $arr=@()
 
         If($obj.EmailAddresses){
@@ -314,17 +288,37 @@ Function Export-Groups{
             }
         }
 
-        $objDL | Add-Member NoteProperty -Name "EmailAddresses" -Value $EmailAddresses -ErrorAction SilentlyContinue
-        $objDL | Add-Member NoteProperty -Name "bypassModerationFromSendersOrMembers" -Value $bypassModerationFromSendersOrMembers -ErrorAction SilentlyContinue
-        $objDL | Add-Member NoteProperty -Name "GrantSendOnBehalfTo" -Value $GrantSendOnBehalfTo -ErrorAction SilentlyContinue
-        $objDL | Add-Member NoteProperty -Name "SendAsPermission" -Value $SendAsPermission -ErrorAction SilentlyContinue
+        $objDL = [PSCustomObject]@{
+            Name = $obj.Name
+            Alias = $obj.Alias
+            BypassNestedModerationEnabled = $obj.BypassNestedModerationEnabled
+            DisplayName = $obj.DisplayName
+            ManagedBy = $managedBy
+            MemberDepartRestriction = $obj.MemberDepartRestriction
+            MemberJoinRestriction = $obj.MemberJoinRestriction
+            ModeratedBy = $moderatedBy
+            ModerationEnabled = $obj.ModerationEnabled
+            SendModerationNotifications = $obj.SendModerationNotifications
+            MaxSendSize = $obj.MaxSendSize 
+            MaxReceiveSize = $obj.MaxReceiveSize
+            AcceptMessagesOnlyFromDLMembers = $AcceptMessagesOnlyFromDLMembers
+            AcceptMessagesOnlyFrom = $AcceptMessagesOnlyFrom
+            HiddenFromAddressListsEnabled = $obj.HiddenFromAddressListsEnabled
+            PrimarySmtpAddress = $obj.PrimarySmtpAddress
+            RejectMessagesFrom = $RejectMessagesFrom
+            RejectMessagesFromDLMembers = $RejectMessagesFromDLMembers
+            RequireSenderAuthenticationEnabled =$obj.RequireSenderAuthenticationEnabled
+            EmailAddresses = $EmailAddresses
+            bypassModerationFromSendersOrMembers = "bypassModerationFromSendersOrMembers"
+            GrantSendOnBehalfTo = "GrantSendOnBehalfTo"
+            SendAsPermission = "SendAsPermission"
+        }
 
         $outputDL += $objDL
-    
-        $groupName = $objDL.Name
-        Write-Log -Status "EXPORT_GROUP" -Message "The group $groupName was added to export list"
+            
+        Write-Log -Status "EXPORT_GROUP" -Message "The group $($objDL.Name) was added to export list"
 
-        }
+    }
 
         try{
             $outputDL | Export-Csv DistributionGroups.csv -NoTypeInformation -ErrorAction SilentlyContinue -Encoding UTF8
