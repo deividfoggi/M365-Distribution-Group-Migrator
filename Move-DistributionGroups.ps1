@@ -29,7 +29,7 @@ The following attributes will be copied
     Name,Alias,BypassNestedModerationEnabled,DisplayName,ManagedBy,MemberDepartRestriction,MemberJoinRestriction,ModeratedBy,ModerationEnabled,SendModerationNotifications,AcceptMessagesOnlyFromDLMembers,AcceptMessagesOnlyFrom,HiddenFromAddressListsEnabled,PrimarySmtpAddress,RejectMessagesFrom,RejectMessagesFromDLMembers,RequireSenderAuthenticationEnabled,EmailAddresses,bypassModerationFromSendersOrMembers,GrantSendOnBehalfTo,SendAsPermission
 
 .PreREQUISITES
-You must follow the exection order, including the need to move to the EXO any mailboxes in the fields ManagedBy and ModeratedBy before run the option 3
+You must follow the exection order, including the need to move to the EXO any mailboxes in the field ManagedBy and ModeratedBy before running the option 3
 
 .PARAMETER Available Options
 1 - Export a list containing all the distribution groups and their respective members
@@ -467,13 +467,13 @@ Function CreateGroups{
     log -Status "ACTION" -Message "Option 3 - Create groups in the EXO was selected"
 
     $mode2 = Read-Host "
-    WARNING!!! Before use the option 3, you must guarantee that the following steps have sucessfully completed:
+    WARNING!!! Before running the option 3, you must guarantee that the following steps have sucessfully completed:
 
-        1. Only use option 3 before option 2;
+        1. Only use option 3 after option 2;
         2. Move all users that are either in the field ManagedBy or ModeratedBy to the EXO;
         3. Run the sync, confirm that all groups have been removed from the Windows Azure Active Directory and make sure no error is logged.
 
-    Proceed ONLY if all 3 steps above have sucessfully completed
+    Proceed ONLY if all the 3 steps above have been sucessfully completed.
 
     Would you like to proceed (y/n)?"
 
