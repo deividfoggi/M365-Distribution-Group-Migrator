@@ -111,7 +111,7 @@ Function ConnectToEXO{
         log -Status "CONN" -Message "User credentials for the user $a.UserName encripted"
 
         $userName = $a.UserName
-        $password = Get-Content .\exo-contoso.sec | convertto-securestring
+        $password = Get-Content .\exo-password.sec | convertto-securestring
         $EXOCredential = New-Object -typename System.Management.Automation.PSCredential -argumentlist $username,$password
 
         $Global:EXOSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $EXOCredential -Authentication Basic -AllowRedirection -ErrorAction SilentlyContinue
@@ -751,7 +751,7 @@ Function CreateGroups{
         }
 
     try{
-        Remove-Item exo-contoso.sec -ErrorAction SilentlyContinue | Out-Null
+        Remove-Item exo-password.sec -ErrorAction SilentlyContinue | Out-Null
         log -Status "CONN" -Message "File with the encripted credentials was removed sucessfully"
         }
     catch{
