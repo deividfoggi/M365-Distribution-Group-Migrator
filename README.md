@@ -1,23 +1,23 @@
 # Move-DistributionGroups.ps1
 
-.SYNOPSIS
+**.SYNOPSIS**
 Export all groups/members to CSV files e after creates them in the EXO, finally adds each member in their respective groups
 Move-DistributionGroups.ps1
 
-.DESCRIPTION
+**.DESCRIPTION**
 The Move-DistributionGroups script exports the attributes and members of all distribution groups from the OnPrem to the EXO, moreover adds the members in their respective groups
 
 Obs: You must execute this script with a credential that has acess to all groups onprem and also you should has a credential member of the role needed to create and edit EXO distribution groups
 
-.ATTRIBUTES
+**.ATTRIBUTES**
 The following attributes will be copied
 
     Name,Alias,BypassNestedModerationEnabled,DisplayName,ManagedBy,MemberDepartRestriction,MemberJoinRestriction,ModeratedBy,ModerationEnabled,SendModerationNotifications,AcceptMessagesOnlyFromDLMembers,AcceptMessagesOnlyFrom,HiddenFromAddressListsEnabled,PrimarySmtpAddress,RejectMessagesFrom,RejectMessagesFromDLMembers,RequireSenderAuthenticationEnabled,EmailAddresses,bypassModerationFromSendersOrMembers,GrantSendOnBehalfTo,SendAsPermission
 
-.PreREQUISITES
+**.PreREQUISITES**
 You must follow the exection order, including the need to move to the EXO any mailboxes in the field ManagedBy and ModeratedBy before running the option 3
 
-.PARAMETER Available Options
+**.PARAMETER Available Options**
 1 - Export a list containing all the distribution groups and their respective members
 
 The first option exports a list containing all distribution groups to the file DistributionGroups.csv. Also, exports a list of members per group to the file DistributionGroups_Members.csv. This option must be the first one to be executed in the case
@@ -31,11 +31,11 @@ The second option removes all groups listed in the DistributionGroups.csv from t
 
 The third option creates all groups listed in the file DistributionGroups.csv into EXO, edits them with the attributes previously exported to the file DistributionGroups.csv
 
-.PARAMETER Group
+**.PARAMETER Group**
 
 The Group parameter could be used to move a specific group
 
-.LOGGING
+**.LOGGING**
 The execution of this script will create a log file in the same directory of this script with the name dd_MM_yyyy.LOG, creating a new log for each new day that the script is executed. This log will register actions and errors.
 The file log contains the following columns separated by comma:
 
